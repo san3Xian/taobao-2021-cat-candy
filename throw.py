@@ -1,0 +1,1 @@
+#while (true); do adb shell input tap 614 1753; sleep 5;done
