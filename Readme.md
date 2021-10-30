@@ -8,7 +8,7 @@
 - python3
 - python3 module: opencv-python
 - adb (需要已写入PATH环境变量中，即在cmd或者shell中可直接执行`adb`)
-- macos(windows 没完全测过，理论上可以)
+- macos(windows 没完全测过，理论上可以,在等待淘宝执行任务过程中倒计时日志输出可能会重复输出)
 
 # 食用姿势
 1. 安卓打开usb调试，在电脑使用`adb devices`确保能看到相应的设备

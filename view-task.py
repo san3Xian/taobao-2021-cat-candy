@@ -56,17 +56,17 @@ while(1):
             print("Got a undo task, begin to start the task: {}".format(task_loc))
             all_task_state = 1
             adb_click(task_loc[1], task_loc[0])
-            sleep(1, 2)
-            
+            sleep(random.randint(1, 2))
+
             # 检测是否进入到了天天领钱引导页
             adb_screenshot(img_source)
             click_location_ttlq = cv_img_match(
                 img_source, img_taobao_ttlq_icon, methods[2], ocv_image_read_type[1], thresold=0.9)
             if (click_location_ttlq):
-                adb_click(click_location_ttlq[1], click_location_ttlq[0])
+                adb_click(click_location_ttlq[0][1], click_location_ttlq[0][0])
             
             # Waiting for the task to be completed, Long start-up times for some tasks
-            rand_time = 20 + random.randint(5, 8)
+            rand_time = 20 + random.randint(3, 6)
             for i in range(rand_time):
                 print("Sleep and wait for the task to be completed: {} / {}".format(i, rand_time), end="\r")
                 sleep(1)
