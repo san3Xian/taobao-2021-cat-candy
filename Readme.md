@@ -7,7 +7,7 @@
 # 环境准备
 - python3
 - python3 module: opencv-python
-- adb (需要已写入PATH)
+- adb (需要已写入PATH环境变量中，即在cmd或者shell中可直接执行`adb`)
 - macos(windows 没完全测过，理论上可以)
 
 # 食用姿势
@@ -20,7 +20,7 @@
 # 暂时不支持的任务 / 行为
 - 游戏小互动 (可能会写)
 - 跳转到支付宝的一切活动
-- 不会滚动任务列表中的任务
+- 滚动任务列表中的任务
 
 # 常见异常
 - 更换手机使用脚本的时候，需要根据log回显调整`view-task.py`中的`thresold`（阈值）以匹配到相应的目标，`thresold`（阈值）取值根据log回显中的`max_loc:`最后的数字调整即可

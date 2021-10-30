@@ -10,6 +10,7 @@ img_task_item_undo_godo = "taobao-pics/task_item_undo_godo.png"
 img_task_item_undo_view = "taobao-pics/task_item_undo_view2.png"
 img_task_item_undo_15s = "taobao-pics/task_item_15_sec.png"
 img_task_done_icon = "taobao-pics/task_done_icon.png"
+img_taobao_ttlq_icon = "taobao-pics/ttlq-icon.png"
 
 adb_screenshot(img_source)
 
@@ -29,20 +30,23 @@ while(1):
     sleep(random.randint(1, 3))
     # begin to find the runable task buttons
     adb_screenshot(img_source)
-    # 针对 去浏览 按钮进行识别，精确率不高
-    #click_location = cv_img_match(
-    #    img_source, img_task_item_undo_view, methods[2], ocv_image_read_type[1], thresold=0.9)
-    #print("task item button location(view): ", click_location)
 
-    # 针对浏览15秒进行识别(更换手机可能需要调整阈值)
-    click_location = cv_img_match(
+    # 针对 浏览15秒(s) 进行识别(更换手机可能需要调整阈值)
+    click_location_15s = cv_img_match(
         img_source, img_task_item_undo_15s, methods[2], ocv_image_read_type[1], thresold=0.784)
-    print("Task start button location(15s text): ", click_location)
+    print("Task start button location(15s text): ", click_location_15s)
     # locale the completed task icons (更换手机可能需要调整阈值)
     task_done_locations = cv_img_match(
         img_source, img_task_done_icon, methods[2], ocv_image_read_type[1], thresold=0.89)
     
+    # 针对 去浏览 按钮进行识别(更换手机可能需要调整阈值)
+    click_location_go_view = cv_img_match(
+        img_source, img_task_item_undo_view, methods[2], ocv_image_read_type[1], thresold=0.9)
+    print("Task start button location(view): ", click_location_go_view)
+
+    click_location = click_location_15s + click_location_go_view
     done_task_icon_height = cv.imread(img_task_done_icon).shape[0]
+
     # Determining whether a task has been performed or not in the for section
     all_task_state = 0
     for task_loc in click_location:
@@ -52,8 +56,17 @@ while(1):
             print("Got a undo task, begin to start the task: {}".format(task_loc))
             all_task_state = 1
             adb_click(task_loc[1], task_loc[0])
-            # Waiting for the task to be completed
-            rand_time = 20 + random.randint(4, 8)
+            sleep(1, 2)
+            
+            # 检测是否进入到了天天领钱引导页
+            adb_screenshot(img_source)
+            click_location_ttlq = cv_img_match(
+                img_source, img_taobao_ttlq_icon, methods[2], ocv_image_read_type[1], thresold=0.9)
+            if (click_location_ttlq):
+                adb_click(click_location_ttlq[1], click_location_ttlq[0])
+            
+            # Waiting for the task to be completed, Long start-up times for some tasks
+            rand_time = 20 + random.randint(5, 8)
             for i in range(rand_time):
                 print("Sleep and wait for the task to be completed: {} / {}".format(i, rand_time), end="\r")
                 sleep(1)
@@ -61,7 +74,7 @@ while(1):
             print("Task completed, go back to task list page and wait")
             print("==============================================")
             adb_keyevent_back()
-            sleep(2)
+            sleep(random.randint(0, 2))
             # break to refind the runable task
             break
     if (not all_task_state):

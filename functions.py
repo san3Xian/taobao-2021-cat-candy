@@ -38,6 +38,7 @@ def cv_img_match(source_img, template_img, cv_method, cv_img_format=1, thresold=
 
     res = cv.matchTemplate(s_img, tpl, cv_method)
     # print(res)
+    # get the most match location and the most mismatched location
     min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
     # 数组处理完以后xy位置乱了？w - h ,xy坐标在return时进行互换
     print("max_loc: (h{},w{}) -- {} ".format(max_loc[1], max_loc[0], max_val))
@@ -51,39 +52,46 @@ def cv_img_match(source_img, template_img, cv_method, cv_img_format=1, thresold=
         for target in zip(*targets[::1]):
             print("multi target match: (h{}, w{}) -- ".format(target[0], target[1]))
             loc.append(target)
+            # draw a rectangle at the matching location
             cv.rectangle(s_img, (target[1], target[0]),
                          (target[1] + tpl_w, target[0] + tpl_h), (0, 0, 255), 4)
         print("multi target match {} items".format(len(loc)))
     else:
         # single match mode
-        print("single target match: (h{}, w{}) -- ".format(max_loc[0], max_loc[1]))
+        print("single target match: (h{}, w{}) -- ".format(max_loc[1], max_loc[0]))
+        # draw a rectangle at the matching location
         ''' Red color '''
         debug_img1 = cv.rectangle(
             s_img, (max_loc[0], max_loc[1]), (max_loc[0] + tpl_w, max_loc[1] + tpl_h), (0, 0, 255), 4)
-
-        ''' Green color '''
-        debug_img2 = cv.rectangle(
-            s_img, (min_loc[0], min_loc[1]), (min_loc[0] + tpl_w, min_loc[1] + tpl_h), (0, 255, 0), 1)
-
-        # cv.imshow(str(cv_method) + '-Image2', debug_img2)
+        
+        # the most mismatched location
+        # ''' Green color '''
+        # debug_img2 = cv.rectangle(
+        #     s_img, (min_loc[0], min_loc[1]), (min_loc[0] + tpl_w, min_loc[1] + tpl_h), (0, 255, 0), 1) 
         loc = [max_loc[1], max_loc[0]]
+    # show the image match status
     cv.imshow(str(template_img) + '-Image', s_img)
     return loc
 
 def taobao_get_task_state(task_location, done_task_locations, done_task_icon_height):
+    """ Determine if this task has been completed
+    
+    Args:
+        task_location: Location of detected task buttons(single location)
+        done_task_locations: Multiple locations of detected task status buttons
+        done_task_icon_height: Height of the image template used to position the task status icon
+    
+    Returns: 
+        1 Task completed
+        0 Task not completed
+    """
     print("Checking task state {} with {} completed task locations".format(task_location, len(done_task_locations)))
     for done_task_loc in done_task_locations:
-        if(task_location[0] >= done_task_loc[0] and task_location[0] <= (done_task_loc[0] + done_task_icon_height) ):
+        if(task_location[0] >= done_task_loc[0] and task_location[0] < (done_task_loc[0] + done_task_icon_height) ):
             return 1
     # task is not complete
     return 0
 
-def cv_img_cut(source_img, cut_height_1=0, cut_height_2=0, cut_width1=0, cut_width2=0):
-    cut_height_1 = int(cut_height_1)
-    cut_height_2 = int(cut_height_2)
-    cut_width1 = int(cut_width1)
-    cut_width2 = int(cut_width2)
-    print(cut_height_1, cut_height_2)
-    print(cut_width1, cut_width2)
-    img_cut = source_img[cut_height_1:cut_height_2, cut_width1:cut_width2]
-    cv.imshow("Image_cut", img_cut)
+def taobao_check_task_page(source_img, task_doing_icon, task_done_icon):
+    """ 画饼
+    """
