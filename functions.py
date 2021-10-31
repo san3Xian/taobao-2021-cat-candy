@@ -87,7 +87,7 @@ def taobao_get_task_state(task_location, done_task_locations, done_task_icon_hei
     """
     print("Checking task state {} with {} completed task locations".format(task_location, len(done_task_locations)))
     for done_task_loc in done_task_locations:
-        if(task_location[0] >= done_task_loc[0] and task_location[0] < (done_task_loc[0] + done_task_icon_height) ):
+        if(task_location[0] >= done_task_loc[0] and task_location[0] <= (done_task_loc[0] + done_task_icon_height) ):
             return 1
     # task is not complete
     return 0
