@@ -43,7 +43,7 @@ while(1):
     print("Task start button location(15s text): ", click_location_15s)
     # locale the completed task icons (更换手机可能需要调整阈值)
     task_done_locations = cv_img_match(
-        img_source, img_task_done_icon, methods[2], ocv_image_read_type[1], thresold=0.89)
+        img_source, img_task_done_icon, methods[2], ocv_image_read_type[1], thresold=0.9)
 
     # 针对 去浏览 按钮类型任务进行识别(更换手机可能需要调整阈值)
     click_location_go_view = cv_img_match(
@@ -63,7 +63,7 @@ while(1):
             print("Got a undo task, begin to start the task: {}".format(task_loc))
             all_task_state = 1
             adb_click(task_loc[1], task_loc[0])
-            sleep(random.randint(1, 2))
+            sleep(random.randint(2, 3))
 
             # 检测是否进入到了天天领钱引导页
             adb_screenshot(img_source)
@@ -73,7 +73,7 @@ while(1):
                 adb_click(click_location_ttlq[0][1], click_location_ttlq[0][0])
 
             # Waiting for the task to be completed, Long start-up times for some tasks
-            rand_time = 20 + random.randint(3, 6)
+            rand_time = 20 + random.randint(2, 5)
             for i in range(rand_time):
                 print(
                     "Sleep and wait for the task to be completed: {} / {}".format(i, rand_time), end="\r")
